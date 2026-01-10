@@ -1,4 +1,4 @@
-const Ship = require("./battleship");
+const Ship = require("./ship");
 
 test("registers hit", () => {
   const myship = new Ship(4);
