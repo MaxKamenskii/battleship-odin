@@ -1,4 +1,16 @@
-const Ship = require("./ship");
+class Ship {
+  constructor(length) {
+    this.length = length;
+    this.damage = 0;
+    this.sunk = false;
+  }
+  hit() {
+    this.damage++;
+    if(this.damage === this.length){
+      this.sunk = true
+    }
+  }
+}
 
 class Gameboard {
   constructor() {
@@ -57,4 +69,20 @@ class Gameboard {
   }
 }
 
-module.exports = Gameboard;
+class Player {
+    constructor(type) {
+        this.type = type
+        this.board = new Gameboard()
+    }
+    attack(player, coordinates) {
+        player.board.receiveAttack(coordinates)
+    }
+    aiAttack(player) {
+        function randomPosition(){
+            return Math.floor(Math.random() * 10);
+        }
+        player.board.receiveAttack([randomPosition(), randomPosition()])
+    }
+}
+
+module.exports = { Ship, Gameboard, Player };
