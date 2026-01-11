@@ -8,12 +8,8 @@ class Ship {
   }
   hit() {
     this.damage++;
-  }
-  isSunk() {
-    if (this.length === this.damage) {
-      return true;
-    } else {
-      return false;
+    if(this.damage === this.length){
+      this.sunk = true
     }
   }
 }

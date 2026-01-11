@@ -10,7 +10,7 @@ test("partly damaged ship sunk status", () => {
   const myship = new Ship(3);
   myship.hit();
   myship.hit();
-  expect(myship.isSunk()).toBe(false);
+  expect(myship.sunk).toBe(false);
 });
 
 test("fully damaged ship sunk status", () => {
@@ -18,5 +18,5 @@ test("fully damaged ship sunk status", () => {
   myship.hit();
   myship.hit();
   myship.hit();
-  expect(myship.isSunk()).toBe(true);
+  expect(myship.sunk).toBe(true);
 });

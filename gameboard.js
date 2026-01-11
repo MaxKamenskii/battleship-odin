@@ -4,7 +4,7 @@ class Gameboard {
   constructor() {
     this.missedAttacks = [];
     this.ships = [];
-    this.missedAttacks = [];
+    this.missedAttacks = new Set();
   }
   placeShip(ship, coordinates) {
     let unit = {};
@@ -32,17 +32,28 @@ class Gameboard {
     }
   }
   receiveAttack(coordinates) {
-    // Iterate over every ship on the board
     for (let ship of this.ships) {
       let found;
-      // check if this ship has the coordinates
       if (ship.hasOwnProperty(coordinates.toString())) {
         let key = coordinates.toString();
         ship[key].hit();
-        return;
+        return 0;
       }
     }
-    return "missed the shot";
+    let key = coordinates.toString();
+    if (!this.missedAttacks.has(key)) {
+      this.missedAttacks.add(key);
+      return;
+    } else {
+      return "You already hit here";
+    }
+  }
+  areSunk() {
+    let sunk;
+    this.ships.forEach((ship) => {
+      sunk = Object.values(ship)[0].sunk;
+    });
+    return sunk;
   }
 }
 
