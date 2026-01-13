@@ -6,7 +6,7 @@ console.log("this is working");
 
 function createBoard(playerLetter) {
   let container = document.getElementById(`Player${playerLetter}_board`);
-  for (let i = 0; i < 10; i++) {
+  for (let i = 9; i >= 0; i--) {
     for (let k = 0; k < 10; k++) {
       // create a div element
       const newDiv = document.createElement("div");
