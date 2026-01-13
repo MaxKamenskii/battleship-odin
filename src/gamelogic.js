@@ -6,8 +6,8 @@ class Ship {
   }
   hit() {
     this.damage++;
-    if(this.damage === this.length){
-      this.sunk = true
+    if (this.damage === this.length) {
+      this.sunk = true;
     }
   }
 }
@@ -31,17 +31,14 @@ class Gameboard {
     // lets say it's [0,0]
     // Iterate over everyship on the board
     for (let ship of this.ships) {
-      let found;
       // check if this ship has coordinate
       if (ship.hasOwnProperty(coordinates.toString())) {
         let key = coordinates.toString();
         return ship[key];
       }
-      // when finished searching check if found still false and return
-      if (!found) {
-        return "not found";
-      }
     }
+    // when finished searching check if found still false and return
+    return "not found";
   }
   receiveAttack(coordinates) {
     for (let ship of this.ships) {
@@ -70,19 +67,19 @@ class Gameboard {
 }
 
 class Player {
-    constructor(type) {
-        this.type = type
-        this.board = new Gameboard()
+  constructor(type) {
+    this.type = type;
+    this.board = new Gameboard();
+  }
+  attack(player, coordinates) {
+    player.board.receiveAttack(coordinates);
+  }
+  aiAttack(player) {
+    function randomPosition() {
+      return Math.floor(Math.random() * 10);
     }
-    attack(player, coordinates) {
-        player.board.receiveAttack(coordinates)
-    }
-    aiAttack(player) {
-        function randomPosition(){
-            return Math.floor(Math.random() * 10);
-        }
-        player.board.receiveAttack([randomPosition(), randomPosition()])
-    }
+    player.board.receiveAttack([randomPosition(), randomPosition()]);
+  }
 }
 
 module.exports = { Ship, Gameboard, Player };
