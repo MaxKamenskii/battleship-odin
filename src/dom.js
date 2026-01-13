@@ -14,7 +14,7 @@ function createBoard(playerLetter) {
       newDiv.classList.add("cell");
 
       // Create and apply an id
-      newDiv.id = `cell${playerLetter} ${k},${i}`;
+      newDiv.id = `cell${playerLetter} ${i},${k}`;
       // Set the proper size of each accoding to the size of the box;
       newDiv.style.width = `${460 / 10}px`;
       newDiv.style.height = `${460 / 10}px`;
@@ -32,7 +32,9 @@ function renderShips(gameboard, letter) {
       let id = `cell${letter} ${key}`;
       let cell = document.getElementById(id);
       // console.log(id);
-      cell.style.backgroundColor = "grey";
+      if (letter == "A") {
+        cell.style.backgroundColor = "grey";
+      }
     }
     // console.log(coord);
   }
@@ -44,24 +46,21 @@ function setupAttackListeners() {
   enemyBoard.addEventListener("click", (el) => {
     if (el.target.classList.contains("cell")) {
       const cellId = el.target.id;
-      console.log("Clicked", cellId);
       // Extract coordinates from cellid
       const coordinates = cellId.toString().split(" ")[1];
-      console.log(coordinates);
       const x = parseInt(coordinates.split(",")[0]);
       const y = parseInt(coordinates.split(",")[1]);
-      console.log(`X and Y are: ${x} and ${y}`);
+      // console.log(`X and Y are: ${x} and ${y}`);
       // check if there is ship at those coordinates
       const ship = playerB.board.getShipAt([x, y]);
       if (ship == "not found") {
         playerA.attack(playerB, [x, y]);
         el.target.style.backgroundColor = "white";
-
-        console.log(ship);
+        el.target.style.pointerEvents = "none";
       } else if (ship !== "not found") {
         playerA.attack(playerB, [x, y]);
         el.target.style.backgroundColor = "red";
-        console.log(ship);
+        el.target.style.pointerEvents = "none";
       }
       // Attack playerB at those coordinates
 
