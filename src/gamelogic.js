@@ -17,6 +17,7 @@ class Gameboard {
     this.missedAttacks = [];
     this.ships = [];
     this.missedAttacks = new Set();
+    this.attackedCoordinates = new Set();
   }
   placeShip(ship, coordinates) {
     let unit = {};
@@ -45,6 +46,7 @@ class Gameboard {
       let found;
       if (ship.hasOwnProperty(coordinates.toString())) {
         let key = coordinates.toString();
+        this.attackedCoordinates.add(key);
         ship[key].hit();
         return 0;
       }
@@ -78,7 +80,16 @@ class Player {
     function randomPosition() {
       return Math.floor(Math.random() * 10);
     }
-    player.board.receiveAttack([randomPosition(), randomPosition()]);
+    let coordinates;
+    let key;
+
+    do {
+      coordinates = [randomPosition(), randomPosition()];
+      key = coordinates.toString();
+    } while (player.board.attackedCoordinates.has(key));
+
+    player.board.receiveAttack(coordinates);
+    return coordinates;
   }
 }
 

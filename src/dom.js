@@ -40,6 +40,26 @@ function renderShips(gameboard, letter) {
   }
 }
 
+function computerTurn() {
+  // Computer attack and returns the coordinates
+  const [x, y] = playerB.aiAttack(playerA);
+
+  // Find the cell on PlayerA's board and update it
+  const cellId = `cellA ${x},${y}`;
+  const cell = document.getElementById(cellId);
+
+  // Check if it was a hit or miss
+  const ship = playerA.board.getShipAt([x, y]);
+
+  if (ship !== "not found") {
+    cell.style.backgroundColor = "red";
+  } else {
+    cell.style.backgroundColor = "white";
+  }
+
+  cell.style.pointerEvents = "none";
+}
+
 function setupAttackListeners() {
   const enemyBoard = document.getElementById("PlayerB_board");
   console.log("PlayerB ships:", playerB.board.ships);
@@ -62,9 +82,7 @@ function setupAttackListeners() {
         el.target.style.backgroundColor = "red";
         el.target.style.pointerEvents = "none";
       }
-      // Attack playerB at those coordinates
-
-      // Update the cell color based on hit/miss
+      computerTurn();
     }
   });
 }
