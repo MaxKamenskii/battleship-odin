@@ -10,6 +10,11 @@ module.exports = {
     path: path.resolve(__dirname, "dist"),
     clean: true,
   },
+  resolve: {
+    fallback: {
+      console: false,
+    },
+  },
   plugins: [
     new HtmlWebpackPlugin({
       template: "./src/template.html",

@@ -1,6 +1,6 @@
 import "./styles.css";
 import { Ship, Gameboard, Player } from "./gamelogic.js";
-import { playerA, playerB } from "./battleship.js";
+import { playerA, playerB, randomShipPlacement } from "./battleship.js";
 
 console.log("this is working");
 
@@ -12,7 +12,6 @@ function createBoard(playerLetter) {
       const newDiv = document.createElement("div");
       // Apply class
       newDiv.classList.add("cell");
-
       // Create and apply an id
       newDiv.id = `cell${playerLetter} ${i},${k}`;
       // Set the proper size of each accoding to the size of the box;
@@ -82,15 +81,56 @@ function setupAttackListeners() {
         el.target.style.backgroundColor = "red";
         el.target.style.pointerEvents = "none";
       }
+      if (playerB.board.areSunk()) {
+        alert("You won! All enemy ships destroyed!");
+        return;
+      }
       computerTurn();
+
+      if (playerA.board.areSunk()) {
+        alert("Computer won! All your ships destroyed!");
+        return;
+      }
     }
   });
 }
 
+function clearVisualBoard(playerLetter) {
+  const board = document.getElementById(`Player${playerLetter}_board`);
+  const cells = board.querySelectorAll(".cell");
+
+  cells.forEach((cell) => {
+    cell.style.backgroundColor = "";
+    cell.style.pointerEvents = "";
+  });
+}
+
+function setupRandomizeButton() {
+  const button = document.getElementById("randomize-btn");
+
+  button.addEventListener("click", () => {
+    playerA.board.clearBoard();
+    playerB.board.clearBoard();
+
+    // Clear visual boards
+    clearVisualBoard("A");
+    clearVisualBoard("B");
+    // Place new random ships
+    const shipLengths = [4, 3, 3, 2, 2, 1, 1, 1, 1];
+    // Place ships randomaly
+    randomShipPlacement(playerA, shipLengths);
+    randomShipPlacement(playerB, shipLengths);
+
+    renderShips(playerA.board, "A");
+  });
+}
 createBoard("A");
 createBoard("B");
-
+// Initial ship placement
+const shipLengths = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1];
+randomShipPlacement(playerA, shipLengths);
+randomShipPlacement(playerB, shipLengths);
 renderShips(playerA.board, "A");
-renderShips(playerB.board, "B");
 
+setupRandomizeButton();
 setupAttackListeners();

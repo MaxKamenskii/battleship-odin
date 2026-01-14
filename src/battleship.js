@@ -1,96 +1,83 @@
-const { Ship, Gameboard, Player } = require("./gamelogic");
+// const { Ship, Gameboard, Player } = require("./gamelogic");
+import { Ship, Gameboard, Player } from "./gamelogic.js";
 
 const playerA = new Player("human");
 const playerB = new Player("computer");
 
-// PlayerA's ships
-const playerA_destroyer = new Ship(4);
-const playerA_battleship1 = new Ship(3);
-const playerA_battleship2 = new Ship(3);
-const playerA_submarine1 = new Ship(2);
-const playerA_submarine2 = new Ship(2);
-const playerA_submarine3 = new Ship(2);
-const playerA_patrol1 = new Ship(1);
-const playerA_patrol2 = new Ship(1);
-const playerA_patrol3 = new Ship(1);
-const playerA_patrol4 = new Ship(1);
-// Placing PlayerA's ships
-playerA.board.placeShip(playerA_destroyer, [
-  [0, 9],
-  [0, 8],
-  [0, 7],
-  [0, 6],
-]);
-playerA.board.placeShip(playerA_battleship1, [
-  [2, 7],
-  [3, 7],
-  [4, 7],
-]);
-playerA.board.placeShip(playerA_battleship2, [
-  [5, 9],
-  [5, 8],
-  [5, 7],
-]);
-playerA.board.placeShip(playerA_submarine1, [
-  [3, 5],
-  [3, 4],
-]);
-playerA.board.placeShip(playerA_submarine2, [
-  [1, 3],
-  [1, 2],
-]);
-playerA.board.placeShip(playerA_submarine3, [
-  [5, 5],
-  [6, 5],
-]);
-playerA.board.placeShip(playerA_patrol1, [[2, 1]]);
-playerA.board.placeShip(playerA_patrol2, [[8, 5]]);
-playerA.board.placeShip(playerA_patrol3, [[8, 2]]);
-playerA.board.placeShip(playerA_patrol4, [[8, 0]]);
-// PlayerB's ships
-const playerB_destroyer = new Ship(4);
-const playerB_battleship1 = new Ship(3);
-const playerB_battleship2 = new Ship(3);
-const playerB_submarine1 = new Ship(2);
-const playerB_submarine2 = new Ship(2);
-const playerB_submarine3 = new Ship(2);
-const playerB_patrol1 = new Ship(1);
-const playerB_patrol2 = new Ship(1);
-const playerB_patrol3 = new Ship(1);
-const playerB_patrol4 = new Ship(1);
-// Placing PlayerB's ships
-// Placing PlayerB's ships (same positions as PlayerA)
-playerB.board.placeShip(playerB_destroyer, [
-  [0, 9],
-  [0, 8],
-  [0, 7],
-  [0, 6],
-]);
-playerB.board.placeShip(playerB_battleship1, [
-  [2, 7],
-  [3, 7],
-  [4, 7],
-]);
-playerB.board.placeShip(playerB_battleship2, [
-  [5, 9],
-  [5, 8],
-  [5, 7],
-]);
-playerB.board.placeShip(playerB_submarine1, [
-  [3, 5],
-  [3, 4],
-]);
-playerB.board.placeShip(playerB_submarine2, [
-  [1, 3],
-  [1, 2],
-]);
-playerB.board.placeShip(playerB_submarine3, [
-  [5, 5],
-  [6, 5],
-]);
-playerB.board.placeShip(playerB_patrol1, [[2, 1]]);
-playerB.board.placeShip(playerB_patrol2, [[8, 5]]);
-playerB.board.placeShip(playerB_patrol3, [[8, 2]]);
-playerB.board.placeShip(playerB_patrol4, [[8, 0]]);
+function getAdjacentCells(coordinate) {
+  const [x, y] = coordinate;
+  const adjacent = [];
 
-module.exports = { playerA, playerB };
+  // Check all 8 directions + the cell itself
+  for (let dx = -1; dx <= 1; dx++) {
+    for (let dy = -1; dy <= 1; dy++) {
+      const newX = x + dx;
+      const newY = y + dy;
+
+      // Make sure it is within the bounds
+      if (newX >= 0 && newX <= 9 && newY >= 0 && newY <= 9) {
+        adjacent.push([newX, newY]);
+      }
+    }
+  }
+  return adjacent;
+}
+
+function randomShipPlacement(player, shipLengths) {
+  // shipLengths = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1]
+
+  shipLengths.forEach((length) => {
+    let placed = false;
+
+    while (!placed) {
+      // 1. Generate random coordinates
+      const x = Math.floor(Math.random() * 10);
+      const y = Math.floor(Math.random() * 10);
+
+      // 2. Pick random direction (0 = horizontal, 1 = vertical)
+      const direction = Math.floor(Math.random() * 2);
+
+      // 3. Generate coordinates for the ship
+      const coordinates = [];
+
+      // Generate coordinates based on direction
+      for (let i = 0; i < length; i++) {
+        let coordinate = direction === 0 ? [x, y + i] : [x + i, y];
+        coordinates.push(coordinate);
+      }
+      // Check if ship fits on board
+      let fitsOnBoard = true;
+      for (let c of coordinates) {
+        if (c[0] > 9 || c[0] < 0 || c[1] > 9 || c[1] < 0) {
+          fitsOnBoard = false;
+          break;
+        }
+      }
+      if (!fitsOnBoard) {
+        continue;
+      }
+      // Check if ship overlaps with the existing ships
+      let overlaps = false;
+      for (let coord of coordinates) {
+        const cellsToCheck = getAdjacentCells(coord);
+        for (let cell of cellsToCheck) {
+          if (player.board.getShipAt(cell) !== "not found") {
+            overlaps = true;
+            break;
+          }
+        }
+        if (overlaps) break;
+      }
+      if (overlaps) {
+        continue;
+      }
+      // If valid, place the ship
+      const ship = new Ship(length);
+      player.board.placeShip(ship, coordinates);
+      placed = true;
+    }
+  });
+}
+
+// module.exports = { playerA, playerB, randomShipPlacement };
+export { playerA, playerB, randomShipPlacement };

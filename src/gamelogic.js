@@ -54,17 +54,26 @@ class Gameboard {
     let key = coordinates.toString();
     if (!this.missedAttacks.has(key)) {
       this.missedAttacks.add(key);
+      this.attackedCoordinates.add(key);
       return;
     } else {
       return "You already hit here";
     }
   }
   areSunk() {
-    let sunk;
+    let sunk = 0;
     this.ships.forEach((ship) => {
-      sunk = Object.values(ship)[0].sunk;
+      if (Object.values(ship)[0].sunk === true) {
+        sunk++;
+      }
     });
-    return sunk;
+    return sunk === this.ships.length;
+  }
+
+  clearBoard() {
+    this.ships = [];
+    this.missedAttacks.clear();
+    this.attackedCoordinates.clear();
   }
 }
 
@@ -93,4 +102,5 @@ class Player {
   }
 }
 
-module.exports = { Ship, Gameboard, Player };
+// module.exports = { Ship, Gameboard, Player };
+export { Ship, Gameboard, Player };
